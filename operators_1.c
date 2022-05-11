@@ -1,135 +1,84 @@
 #include "monty.h"
-
 /**
- * _push - The opcode push pushes an element to the stack
- *
- * @stack: double pointer to the head of the stack
- * @line_number: is the line number
- * Return: void
+ * exec_pall - this function executes the pall opcode
+ * @stack: the stack to read the numbers
+ * @line_number: number of line that is executed
+ * Return: void function
  */
-
-void _push(stack_t **stack, unsigned int line_number)
+void exec_pall(stack_t **stack, unsigned int line_number)
 {
-	stack_t *node;
-	char *num;
-
-	num = strtok(NULL, DELIMS);
-	if (num == NULL)
-	{
-		printf("L%u: usage: push integer\n", line_number);
-		exit(EXIT_FAILURE);
-	}
-
-	node = malloc(sizeof(stack_t));
-	if (node == NULL)
-	{
-		printf("Error: malloc failed\n");
-		exit(EXIT_FAILURE);
-	}
-
-	node->n = atoi(num);
-	node->prev = NULL;
-	node->next = *stack;
-
-	if (*stack != NULL)
-		(*stack)->prev = node;
-
-	*stack = node;
-}
-
-/**
- * _pall - The opcode pall prints all the values on the stack
- *
- * @stack: double pointer to the head of the stack
- * @line_number: is the line number
- * Return: void
- */
-
-void _pall(stack_t **stack, unsigned int line_number)
-{
-	stack_t *temp = *stack;
-
+	stack_t *tmp;
 	(void) line_number;
 
-	while (temp)
-	{
-		printf("%d\n", temp->n);
-		temp = temp->next;
-	}
+	if (!stack || !(*stack))
+		return;
+
+	tmp = *stack;
+
+	while (tmp->prev)
+		tmp = tmp->prev;
+
+	for (; tmp->next; tmp = tmp->next)
+		printf("%d\n", tmp->n);
+
+	printf("%d\n", tmp->n);
 }
-
 /**
- * _pint - The opcode pint prints the value at the top of the stack
- *
- * @stack: double pointer to the head of the stack
- * @line_number: is the line number
- * Return: void
+ * exec_nop - this function executes the nop opcode does nothing jeje
+ * @stack: the stack to read the numbers
+ * @line_number: number of line that is executed
+ * Return: void function
  */
-
-void _pint(stack_t **stack, unsigned int line_number)
+void exec_nop(stack_t **stack, unsigned int line_number)
 {
-	if (stack == NULL || *stack == NULL)
-	{
-		printf("L%u: can't pint, stack empty\n", line_number);
-		exit(EXIT_FAILURE);
-	}
-
-	printf("%d\n", (*stack)->n);
+	(void) stack;
+	(void) line_number;
 }
-
 /**
- * _pop - The opcode pop removes the top element of the stack
- *
- * @stack: double pointer to the head of the stack
- * @line_number: is the line number
- * Return: void
+ * exec_pint - this function executes the pint opcode
+ * @stack: the stack to read the numbers
+ * @line_number: number of line that is executed
+ * Return: void function
  */
-
-void _pop(stack_t **stack, unsigned int line_number)
+void exec_pint(stack_t **stack, unsigned int line_number)
 {
-	stack_t *temp;
+	stack_t *actual = *stack;
 
-	if (stack == NULL || *stack == NULL)
-	{
-		printf("L%u: can't pop an empty stack\n", line_number);
-		exit(EXIT_FAILURE);
-	}
-
-	temp = *stack;
-	*stack = (*stack)->next;
-
-	free(temp);
+	actual == NULL ? error_handler("pint", -98, line_number) : (void) actual;
+	printf("%d\n", actual->n);
 }
-
 /**
- * _swap - The opcode swap swaps the top two elements of the stack
- *
- * @stack: double pointer to the head of the stack
- * @line_number: is the line number
- * Return: void
+ * exec_pop - this function executes the pop opcode
+ * @stack: the stack to read the numbers
+ * @line_number: number of line that is executed
+ * Return: void function
  */
-
-void _swap(stack_t **stack, unsigned int line_number)
+void exec_pop(stack_t **stack, unsigned int line_number)
 {
-	stack_t *temp;
+	stack_t *tmp = *stack;
 
-	if (!stack || !(*stack) || !(*stack)->next)
-	{
-		printf("L%u: can't swap, stack too short\n", line_number);
-		exit(EXIT_FAILURE);
-	}
+	tmp == NULL ? error_handler("pop", -95, line_number) : (void) tmp;
+	*stack = tmp->next;
+	if (tmp->next)
+		tmp->next->prev = NULL;
 
-	temp = (*stack)->next;
+	free(tmp);
+}
+/**
+ * exec_swap - this function executes the swap opcode
+ * @stack: the stack to read the numbers
+ * @line_number: number of line that is executed
+ * Return: void function
+ */
+void exec_swap(stack_t **stack, unsigned int line_number)
+{
+	int aux;
+	stack_t *actual = *stack, *next;
 
-	(*stack)->prev = temp;
-	(*stack)->next = temp->next;
-
-	temp->prev = NULL;
-
-	if (temp->next)
-		temp->next->prev = *stack;
-
-	temp->next = *stack;
-
-	*stack = temp;
+	actual == NULL || actual->next == NULL ?
+	error_handler("swap", -99, line_number) : (void) actual;
+	next = actual->next;
+	aux = actual->n;
+	actual->n = next->n;
+	next->n = aux;
 }
