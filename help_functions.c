@@ -78,3 +78,26 @@ void get_operator(stack_t **stack, char *op, unsigned int line_number)
 		exit(EXIT_FAILURE);
 	}
 }
+
+/**
+ * free_glob - global frees memory
+ *
+ * Return: void
+ */
+
+void free_glob(void)
+{
+	stack_t *to_free;
+	stack_t *temp = NULL;
+
+	to_free = *head_glob;
+
+	while (to_free)
+	{
+		temp = to_free->next;
+
+		free(to_free);
+
+		to_free = temp;
+	}
+}
