@@ -35,9 +35,12 @@ typedef struct instruction_s
 	void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
 
+extern stack_t **head_glob;
+
 /* Help Functions */
 void open_file(char *file, stack_t **stack);
 void get_operator(stack_t **stack, char *op, unsigned int line_number);
+void free_glob(void);
 
 /* Operatores */
 void _push(stack_t **stack, unsigned int line_number);
