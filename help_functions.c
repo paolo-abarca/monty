@@ -11,6 +11,7 @@
 void open_file(char *file, stack_t **stack)
 {
 	FILE *fd;
+	ssize_t len;
 	char *string = NULL;
 	size_t string_size = 0;
 	char *token;
@@ -24,7 +25,7 @@ void open_file(char *file, stack_t **stack)
 		exit(EXIT_FAILURE);
 	}
 
-	while (getline(&string, &string_size, fd) != EOF)
+	while ((len = getline(&string, &string_size, fd)) != -1)
 	{
 		token = strtok(string, delimiter);
 		num++;
@@ -62,7 +63,7 @@ void get_operator(stack_t **stack, char *op, unsigned int line_number)
 		{NULL, NULL}
 	};
 
-	for (i = 0; ops[i].opcode != NULL; i++)
+	for (i = 0; ops[i].opcode; i++)
 	{
 		if (strcmp(op, ops[i].opcode) == 0)
 		{
