@@ -10,6 +10,7 @@
 
 int main(int argc, char *argv[])
 {
+	stack_t **head_glob;
 	stack_t *head;
 
 	if (argc != 2)
@@ -19,8 +20,11 @@ int main(int argc, char *argv[])
 	}
 
 	head = NULL;
+	head_glob = &head;
 
 	open_file(argv[1], &head);
+
+	atexit(free_glob);
 
 	exit(EXIT_SUCCESS);
 }
