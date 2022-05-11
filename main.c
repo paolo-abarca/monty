@@ -1,29 +1,17 @@
 #include "monty.h"
 
 /**
- * main - Entry point
- *
- * @argc: are the arguments we give to the program
- * @argv: are the test files
- * Return: always EXIT_SUCCESS
+ * main - entry point
+ * @argc: count of arguments
+ * @argv: The arguments
+ * Description: entry point for the program to exec monty code
+ * Return: 0 on success
  */
-
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
-	stack_t *head;
-
-	if (argc != 2)
-	{
-		printf("USAGE: monty file\n");
-		exit(EXIT_FAILURE);
-	}
-
-	head = NULL;
-	global_head = &head;
-
-	open_file(argv[1], &head);
-
-	atexit(free_glob);
-
-	exit(EXIT_SUCCESS);
+	set();
+	verify_args(argc);
+	open_and_read(*(argv + 1));
+	clean();
+	return (EXIT_SUCCESS);
 }
