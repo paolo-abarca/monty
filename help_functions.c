@@ -1,100 +1,111 @@
 #include "monty.h"
 
 /**
- * open_file - function in charge of opening files
- *
- * @file: the name of the file
- * @stack: double pointer to top of the stack
- * Return: error if I fail in code or close the file
+ * verify_args - verify the args
+ * @argc: arguments
+ * Return: 0 in succes -1 in fail
  */
 
-void open_file(char *file, stack_t **stack)
+void verify_args(int argc)
 {
-	size_t len;
-	ssize_t read_line;
-	unsigned int num = 0;
-	char *line = NULL;
-	FILE *fd;
-	char *command;
-
-	fd = fopen(file, "r");
-	if (!fd)
+	if (argc > 2 || argc < 2)
 	{
-		printf("Error: Can't open file %s\n", file);
+		dprintf(STDERR_FILENO, "USAGE: monty file\n");
 		exit(EXIT_FAILURE);
 	}
-
-	while ((read_line = getline(&line, &len, fd)) != -1)
-	{
-		command = strtok(line, DELIMS);
-		num++;
-
-		if (command)
-			get_operator(stack, command, num);
-	}
-
-	if (line)
-		free(line);
-
-	fclose(fd);
 }
 
 /**
- * get_operator - get stack operators
- *
- * @stack: the pointer to the head of the stack
- * @op: is the instruction
- * @line_num: is the line number
- * Return: void
+ * open_and_read - open the monty file and read his content
+ * @f: the file to open
+ * Return: Void no return
  */
+void open_and_read(char *f)
+{
+	size_t l = 0;
+	ssize_t r;
+	unsigned int ln = 1;
+	int value;
+	char *op, *val, *opcode;
 
-void get_operator(stack_t **stack, char *op, unsigned int line_num)
+	settings.file = fopen(f, "r");
+	if (settings.file == NULL)
+		error_handler(f, -96, ln);
+	while ((r = getline(&settings.line, &l, settings.file)) != -1)
+	{
+		op = strtok(settings.line, " ");
+		if (*op == '#' || *op == '\n')
+		{
+			ln++;
+			continue;
+		}
+		val = strtok(NULL, " \n");
+		opcode = strtok(op, " \n");
+		if (strcmp(opcode, "push") == 0)
+		{
+			if (is_number(val) && val != NULL)
+			{
+				value = atoi(val);
+				if (!settings.queue)
+					push_stack(&settings.stack, value);
+				else
+					push_queue(&settings.stack, value);
+			}
+			else
+				error_handler(opcode, -129, ln);
+		} else
+		{
+			exec_monty(&settings.stack, opcode, ln);
+		}
+		ln++;
+	}
+}
+/**
+ * exec_monty - execute the opcode funcion
+ * @stack: head of the stack
+ * @opcode: opcode instruction
+ * @ln: number of line
+ */
+void exec_monty(stack_t **stack, char *opcode, int ln)
 {
 	int i;
-	instruction_t ops[] = {
-		{"push", _push},
-		{"pall", _pall},
-		{"pint", _pint},
-		{"pop", _pop},
-		{"swap", _swap},
-		{"add", _add},
-		{"nop", _nop},
+	char *op;
+	instruction_t instructions[] = {
+		{"pall", exec_pall},
+		{"pint", exec_pint},
+		{"pop", exec_pop},
+		{"swap", exec_swap},
+		{"nop", exec_nop},
+		{"add", exec_add},
 		{NULL, NULL}
 	};
-
-	for (i = 0; ops[i].opcode; i++)
-		if (strcmp(op, ops[i].opcode) == 0)
+	op = strtok(opcode, " \n");
+	for (i = 0; instructions[i].opcode; i++)
+		if (strcmp(op, instructions[i].opcode) == 0)
 		{
-			ops[i].f(stack, line_num);
+			instructions[i].f(stack, ln);
 			return;
 		}
-
-	if (strlen(op) != 0 && op[0] != '#')
-	{
-		printf("L%u: unknown instruction %s\n", line_num, op);
-		exit(EXIT_FAILURE);
-	}
+	error_handler(opcode, -128, ln);
 }
-
 /**
- * free_glob - global frees memory
- *
+ * set - set initial values
  * Return: void
  */
-
-void free_glob(void)
+void set(void)
 {
-	stack_t *to_free;
-	stack_t *temp = NULL;
-
-	to_free = *global_head;
-
-	while (to_free)
-	{
-		temp = to_free->next;
-
-		free(to_free);
-
-		to_free = temp;
-	}
+	settings.file = NULL;
+	settings.line = NULL;
+	settings.stack = NULL;
+	settings.queue = false;
+}
+/**
+ * clean - clean men
+ * Return: void
+ */
+void clean(void)
+{
+	fclose(settings.file);
+	free(settings.line);
+	fstack(settings.stack);
 }
