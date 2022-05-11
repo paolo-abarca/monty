@@ -1,44 +1,17 @@
 #include "monty.h"
-
 /**
- * _nop - The opcode nop doesn’t do anything
- *
- * @stack: double pointer to the head of the stack
- * @line_number: is the line number
- * Return: void
+ * exec_add - this function executes the add opcode
+ * @stack: the stack to read the numbers
+ * @line_number: number of line that is executed
+ * Return: void function
  */
-
-void _nop(stack_t **stack, unsigned int line_number)
+void exec_add(stack_t **stack, unsigned int line_number)
 {
-	(void) stack;
-	(void) line_number;
-}
+	stack_t *actual = *stack, *next;
 
-/**
- * _add - The opcode add adds the top two elements of the stack
- *
- * @stack: double pointer to the head of the stack
- * @line_number: is the line number
- * Return: void
- */
-
-void _add(stack_t **stack, unsigned int line_number)
-{
-	stack_t *temp;
-	int sum;
-
-	if (!stack || !(*stack) || !(*stack)->next)
-	{
-		printf("L%u: can't add, stack too short\n", line_number);
-		exit(EXIT_FAILURE);
-	}
-
-	temp = *stack;
-
-	sum = temp->n + temp->next->n;
-	temp->next->n = sum;
-
-	*stack = temp->next;
-
-	free(temp);
+	if (actual == NULL || actual->next == NULL)
+		error_handler("add", -99, line_number);
+	next = actual->next;
+	next->n =  next->n + actual->n;
+	exec_pop(stack, line_number);
 }
