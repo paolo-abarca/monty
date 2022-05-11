@@ -10,32 +10,31 @@
 
 void open_file(char *file, stack_t **stack)
 {
-	FILE *fd;
-	ssize_t len;
-	char *string = NULL;
-	size_t string_size = 0;
-	char *token;
-	char delimiter[] = " \t\n\r";
+	size_t len;
+	ssize_t read_line;
 	unsigned int num = 0;
+	char *line = NULL;
+	FILE *fd;
+	char *command;
 
 	fd = fopen(file, "r");
-	if (fd == NULL)
+	if (!fd)
 	{
 		printf("Error: Can't open file %s\n", file);
 		exit(EXIT_FAILURE);
 	}
 
-	while ((len = getline(&string, &string_size, fd)) != -1)
+	while ((read_line = getline(&line, &len, fd)) != -1)
 	{
-		token = strtok(string, delimiter);
+		command = strtok(line, DELIMS);
 		num++;
 
-		if (token != NULL)
-			get_operator(stack, token, num);
+		if (command)
+			get_operator(stack, command, num);
 	}
 
-	if (string != NULL)
-		free(string);
+	if (line)
+		free(line);
 
 	fclose(fd);
 }
@@ -45,11 +44,11 @@ void open_file(char *file, stack_t **stack)
  *
  * @stack: the pointer to the head of the stack
  * @op: is the instruction
- * @line_number: is the line number
+ * @line_num: is the line number
  * Return: void
  */
 
-void get_operator(stack_t **stack, char *op, unsigned int line_number)
+void get_operator(stack_t **stack, char *op, unsigned int line_num)
 {
 	int i;
 	instruction_t ops[] = {
@@ -58,23 +57,21 @@ void get_operator(stack_t **stack, char *op, unsigned int line_number)
 		{"pint", _pint},
 		{"pop", _pop},
 		{"swap", _swap},
-		{"nop", _nop},
 		{"add", _add},
+		{"nop", _nop},
 		{NULL, NULL}
 	};
 
 	for (i = 0; ops[i].opcode; i++)
-	{
 		if (strcmp(op, ops[i].opcode) == 0)
 		{
-			ops[i].f(stack, line_number);
+			ops[i].f(stack, line_num);
 			return;
 		}
-	}
 
 	if (strlen(op) != 0 && op[0] != '#')
 	{
-		printf("L%u: unknown instruction %s\n", line_number, op);
+		printf("L%u: unknown instruction %s\n", line_num, op);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -90,7 +87,7 @@ void free_glob(void)
 	stack_t *to_free;
 	stack_t *temp = NULL;
 
-	to_free = *head_glob;
+	to_free = *global_head;
 
 	while (to_free)
 	{
