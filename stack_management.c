@@ -1,10 +1,13 @@
 #include "monty.h"
+
 /**
- * push_stack - function
+ * push_stack - function that pushes a stack
+ *
  * @head: head of list
  * @n: n value of new node
  * Return: address of new element
  */
+
 stack_t *push_stack(stack_t **head, const int n)
 {
 	stack_t *new;
@@ -32,12 +35,15 @@ stack_t *push_stack(stack_t **head, const int n)
 
 	return (*head);
 }
+
 /**
- * push_queue - function
+ * push_queue - function that pushes a queue
+ *
  * @head: head of list
  * @n: n value of new node
  * Return: address of new element
  */
+
 stack_t *push_queue(stack_t **head, const int n)
 {
 	stack_t *new, *actual;
@@ -64,12 +70,15 @@ stack_t *push_queue(stack_t **head, const int n)
 	new->prev = actual;
 	return (new);
 }
+
 /**
- * fstack - free the stack
+ * free_stack - is a function that handles errors
+ *
  * @head: head of the stack
  * Return: void
  */
-void fstack(stack_t *head)
+
+void free_stack(stack_t *head)
 {
 	stack_t *aux, *actual;
 
