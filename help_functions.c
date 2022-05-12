@@ -99,9 +99,15 @@ void get_operator(stack_t **stack, char *opcode, int line_number)
 		{"nop", _nop},
 		{"add", _add},
 		{"sub", _sub},
-		{"div", _div},
 		{"mul", _mul},
+		{"div", _div},
 		{"mod", _mod},
+		{"pchar", _pchar},
+		{"pstr", _pstr},
+		{"rotl", _rotl},
+		{"rotr", _rotr},
+		{"stack", _stack},
+		{"queue", _queue},
 		{NULL, NULL}
 	};
 	op = strtok(opcode, " \n");
