@@ -1,10 +1,12 @@
 #include "monty.h"
+
 /**
  * is_number - check if the string is a number
+ *
  * @c: string
- * Return: 1 if is number digit
- * if not, 0 is returned.
+ * Return: 1 if is digit if not, 0 is returned
  */
+
 int is_number(char *c)
 {
 	char *aux = c;
@@ -19,5 +21,6 @@ int is_number(char *c)
 		if (*aux < '0' || *aux > '9')
 			return (0);
 	}
+
 	return (1);
 }
