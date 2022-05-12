@@ -86,4 +86,14 @@ void _div(stack_t **stack, unsigned int line_number);
 void _mul(stack_t **stack, unsigned int line_number);
 void _mod(stack_t **stack, unsigned int line_number);
 
+/* Operators_3 */
+void _pchar(stack_t **stack, unsigned int line_number);
+void _pstr(stack_t **stack, unsigned int line_number);
+void _rotl(stack_t **stack, unsigned int line_number);
+void _rotr(stack_t **stack, unsigned int line_number);
+
+/* Operators_4 */
+void _stack(stack_t **stack, unsigned int line_number);
+void _queue(stack_t **stack, unsigned int line_number);
+
 #endif /* MONTY_H */
