@@ -1,12 +1,27 @@
 #include "monty.h"
 
 /**
- * verify_args - verify the args
- * @argc: arguments
- * Return: 0 in succes -1 in fail
+ * init_settings - function that initializes the settings
+ *
+ * Return: void
  */
 
-void verify_args(int argc)
+void init_settings(void)
+{
+	settings.file = NULL;
+	settings.line = NULL;
+	settings.stack = NULL;
+	settings.queue = false;
+}
+
+/**
+ * check_args - check if the program receives 2 arguments
+ *
+ * @argc: is the argument counter
+ * Return: void
+ */
+
+void check_args(int argc)
 {
 	if (argc > 2 || argc < 2)
 	{
@@ -16,31 +31,33 @@ void verify_args(int argc)
 }
 
 /**
- * open_and_read - open the monty file and read his content
- * @f: the file to open
- * Return: Void no return
+ * open_file - function in charge of opening files
+ *
+ * @f: the name of the file
+ * Return: void
  */
-void open_and_read(char *f)
+
+void open_file(char *f)
 {
-	size_t l = 0;
-	ssize_t r;
-	unsigned int ln = 1;
+	unsigned int line_number = 1;
+	ssize_t read;
+	size_t len = 0;
+	char *token, *val, *opcode;
 	int value;
-	char *op, *val, *opcode;
 
 	settings.file = fopen(f, "r");
 	if (settings.file == NULL)
-		error_handler(f, -96, ln);
-	while ((r = getline(&settings.line, &l, settings.file)) != -1)
+		error_handler(f, -96, line_number);
+	while ((read = getline(&settings.line, &len, settings.file)) != -1)
 	{
-		op = strtok(settings.line, " ");
-		if (*op == '#' || *op == '\n')
+		token = strtok(settings.line, " ");
+		if (*token == '#' || *token == '\n')
 		{
-			ln++;
+			line_number++;
 			continue;
 		}
 		val = strtok(NULL, " \n");
-		opcode = strtok(op, " \n");
+		opcode = strtok(token, " \n");
 		if (strcmp(opcode, "push") == 0)
 		{
 			if (is_number(val) && val != NULL)
@@ -52,60 +69,60 @@ void open_and_read(char *f)
 					push_queue(&settings.stack, value);
 			}
 			else
-				error_handler(opcode, -129, ln);
+				error_handler(opcode, -129, line_number);
 		} else
 		{
-			exec_monty(&settings.stack, opcode, ln);
+			get_operator(&settings.stack, opcode, line_number);
 		}
-		ln++;
+		line_number++;
 	}
 }
+
 /**
- * exec_monty - execute the opcode funcion
- * @stack: head of the stack
- * @opcode: opcode instruction
- * @ln: number of line
+ * get_operator - get stack operators
+ *
+ * @stack: The pointer to the head of the stack
+ * @opcode: is the instruction
+ * @line_number: is the line number
+ * Return: void
  */
-void exec_monty(stack_t **stack, char *opcode, int ln)
+
+void get_operator(stack_t **stack, char *opcode, int line_number)
 {
 	int i;
 	char *op;
-	instruction_t instructions[] = {
-		{"pall", exec_pall},
-		{"pint", exec_pint},
-		{"pop", exec_pop},
-		{"swap", exec_swap},
-		{"nop", exec_nop},
-		{"add", exec_add},
+	instruction_t ops[] = {
+		{"pall", _pall},
+		{"pint", _pint},
+		{"pop", _pop},
+		{"swap", _swap},
+		{"nop", _nop},
+		{"add", _add},
+		{"sub", _sub},
+		{"div", _div},
+		{"mul", _mul},
+		{"mod", _mod},
 		{NULL, NULL}
 	};
 	op = strtok(opcode, " \n");
-	for (i = 0; instructions[i].opcode; i++)
-		if (strcmp(op, instructions[i].opcode) == 0)
+	for (i = 0; ops[i].opcode; i++)
+		if (strcmp(op, ops[i].opcode) == 0)
 		{
-			instructions[i].f(stack, ln);
+			ops[i].f(stack, line_number);
 			return;
 		}
-	error_handler(opcode, -128, ln);
+	error_handler(opcode, -128, line_number);
 }
+
 /**
- * set - set initial values
+ * free_code - free code
+ *
  * Return: void
  */
-void set(void)
-{
-	settings.file = NULL;
-	settings.line = NULL;
-	settings.stack = NULL;
-	settings.queue = false;
-}
-/**
- * clean - clean men
- * Return: void
- */
-void clean(void)
+
+void free_code(void)
 {
 	fclose(settings.file);
 	free(settings.line);
-	fstack(settings.stack);
+	free_stack(settings.stack);
 }
