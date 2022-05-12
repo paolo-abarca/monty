@@ -1,11 +1,14 @@
 #include "monty.h"
+
 /**
- * exec_pall - this function executes the pall opcode
- * @stack: the stack to read the numbers
- * @line_number: number of line that is executed
- * Return: void function
+ * _pall - The opcode pall prints all the values on the stack
+ *
+ * @stack: Double pointer to the head of the stack
+ * @line_number: is the line number
+ * Return: void
  */
-void exec_pall(stack_t **stack, unsigned int line_number)
+
+void _pall(stack_t **stack, unsigned int line_number)
 {
 	stack_t *tmp;
 	(void) line_number;
@@ -23,37 +26,32 @@ void exec_pall(stack_t **stack, unsigned int line_number)
 
 	printf("%d\n", tmp->n);
 }
+
 /**
- * exec_nop - this function executes the nop opcode does nothing jeje
- * @stack: the stack to read the numbers
- * @line_number: number of line that is executed
- * Return: void function
+ * _pint - The opcode pint prints the value at the top of the stack
+ *
+ * @stack: Double pointer to the head of the stack
+ * @line_number: is the line number
+ * Return: void
  */
-void exec_nop(stack_t **stack, unsigned int line_number)
-{
-	(void) stack;
-	(void) line_number;
-}
-/**
- * exec_pint - this function executes the pint opcode
- * @stack: the stack to read the numbers
- * @line_number: number of line that is executed
- * Return: void function
- */
-void exec_pint(stack_t **stack, unsigned int line_number)
+
+void _pint(stack_t **stack, unsigned int line_number)
 {
 	stack_t *actual = *stack;
 
 	actual == NULL ? error_handler("pint", -98, line_number) : (void) actual;
 	printf("%d\n", actual->n);
 }
+
 /**
- * exec_pop - this function executes the pop opcode
- * @stack: the stack to read the numbers
- * @line_number: number of line that is executed
- * Return: void function
+ * _pop - The opcode pop removes the top element of the stack
+ *
+ * @stack: double pointer to the head of the stack
+ * @line_number: is the line number
+ * Return: void
  */
-void exec_pop(stack_t **stack, unsigned int line_number)
+
+void _pop(stack_t **stack, unsigned int line_number)
 {
 	stack_t *tmp = *stack;
 
@@ -64,13 +62,16 @@ void exec_pop(stack_t **stack, unsigned int line_number)
 
 	free(tmp);
 }
+
 /**
- * exec_swap - this function executes the swap opcode
- * @stack: the stack to read the numbers
- * @line_number: number of line that is executed
- * Return: void function
+ * _swap - The opcode swap swaps the top two elements of the stack
+ *
+ * @stack: double pointer to the head of the stack
+ * @line_number: is the line number
+ * Return: void
  */
-void exec_swap(stack_t **stack, unsigned int line_number)
+
+void _swap(stack_t **stack, unsigned int line_number)
 {
 	int aux;
 	stack_t *actual = *stack, *next;
@@ -81,4 +82,18 @@ void exec_swap(stack_t **stack, unsigned int line_number)
 	aux = actual->n;
 	actual->n = next->n;
 	next->n = aux;
+}
+
+/**
+ * _nop - The opcode nop doesn't do anything
+ *
+ * @stack: double pointer to the head of the stack
+ * @line_number: is the line number
+ * Return: void
+ */
+
+void _nop(stack_t **stack, unsigned int line_number)
+{
+	(void) stack;
+	(void) line_number;
 }
