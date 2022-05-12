@@ -1,8 +1,6 @@
 #ifndef MONTY_H
 #define MONTY_H
 
-/* Libraries */
-
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -23,6 +21,7 @@ typedef struct stack_s
 	struct stack_s *prev;
 	struct stack_s *next;
 } stack_t;
+
 /**
  * struct instruction_s - opcode and its function
  * @opcode: the opcode
@@ -51,55 +50,50 @@ typedef struct settings_s
 	bool queue;
 } settings_t;
 
+/* Global Variable */
 extern settings_t settings;
 settings_t settings;
 
+/* Helpers_functions */
+void init_settings(void);
+void check_args(int argc);
+void open_file(char *f);
+void get_operator(stack_t **stack, char *opcode, int line_number);
+void free_code(void);
 
-
-/* helpers */
-void verify_args(int argc);
-void open_and_read(char *f);
-void exec_monty(stack_t **stack, char *opcode, int ln);
-void set(void);
-void clean(void);
-
-/*Tools*/
-int is_number(char *c);
-
-/* Instructions */
-void exec_pall(stack_t **stack, unsigned int line_number);
-void exec_pop(stack_t **stack, unsigned int line_number);
-void exec_pint(stack_t **stack, unsigned int line_number);
-void exec_swap(stack_t **stack, unsigned int line_number);
-void exec_nop(stack_t **stack, unsigned int line_number);
-
-/* String Instructions */
-void exec_pchar(stack_t **stack, unsigned int line_number);
-void exec_pstr(stack_t **stack, unsigned int line_number);
-
-/* Aritmetic Instructions */
-void exec_div(stack_t **stack, unsigned int line_number);
-void exec_mod(stack_t **stack, unsigned int line_number);
-void exec_add(stack_t **stack, unsigned int line_number);
-void exec_sub(stack_t **stack, unsigned int line_number);
-void exec_mul(stack_t **stack, unsigned int line_number);
-
-/* Rotations Instructions*/
-void exec_rotl(stack_t **stack, unsigned int line_number);
-void exec_rotr(stack_t **stack, unsigned int line_number);
-
-/* Errors managements */
-
+/* Error_handler */
 void error_handler(char *opcode, int errorcode, int ln);
 
-/* FIFO AND LIFO */
-void exec_stack(stack_t **stack, unsigned int line_number);
-void exec_queue(stack_t **stack, unsigned int line_number);
+/* Tools */
+int is_number(char *c);
 
 /* Stack Management */
-
 stack_t *push_stack(stack_t **head, const int n);
 stack_t *push_queue(stack_t **head, const int n);
-void fstack(stack_t *head);
+void free_stack(stack_t *head);
 
-#endif
+/* Operators_1 */
+void _pall(stack_t **stack, unsigned int line_number);
+void _pop(stack_t **stack, unsigned int line_number);
+void _pint(stack_t **stack, unsigned int line_number);
+void _swap(stack_t **stack, unsigned int line_number);
+void _nop(stack_t **stack, unsigned int line_number);
+
+/* Operators_2 */
+void _add(stack_t **stack, unsigned int line_number);
+void _sub(stack_t **stack, unsigned int line_number);
+void _div(stack_t **stack, unsigned int line_number);
+void _mul(stack_t **stack, unsigned int line_number);
+void _mod(stack_t **stack, unsigned int line_number);
+
+/* Operators_3 */
+void _pchar(stack_t **stack, unsigned int line_number);
+void _pstr(stack_t **stack, unsigned int line_number);
+void _rotl(stack_t **stack, unsigned int line_number);
+void _rotr(stack_t **stack, unsigned int line_number);
+
+/* Operators_4 */
+void _stack(stack_t **stack, unsigned int line_number);
+void _queue(stack_t **stack, unsigned int line_number);
+
+#endif /* MONTY_H */
